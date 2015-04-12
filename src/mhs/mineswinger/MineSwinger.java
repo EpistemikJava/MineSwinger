@@ -24,6 +24,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.swing.Box;
@@ -40,6 +44,9 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 /**
  * This is a Java Swing MineSweeper game inspired by the classic Windows game.
@@ -482,8 +489,32 @@ public class MineSwinger extends JFrame {
             System.err.println( myname() + Msgs.str( "Snd.play" ) + SND_CLIPS[track] + "NOT Found!" );
             return;
         }
+/*
+        public class JavaAudioPlaySoundExample
+        {
+          public static void main(String[] args) 
+          throws Exception
+          {*/
+            // open the sound file as a Java input stream
+            String gongFile = SND_CLIPS[track];
+            InputStream in;
+            try {
+                in = new FileInputStream(System.getProperty( "user.dir" ) + System.getProperty( "file.separator" ) + gongFile);
 
-        soundFX[track].play();
+                // create an audiostream from the inputstream
+                AudioStream audioStream = new AudioStream(in);
+
+                // play the audio clip with the audioplayer class
+                AudioPlayer.player.start(audioStream);
+            } catch( FileNotFoundException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch( IOException e ) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+         
+//        soundFX[track].play();
         if( DEBUG_LEVEL > 1 ) System.out.println( myname() + Msgs.str( "Snd.play" ) + "Playing '" + SND_CLIPS[track] + "'" );
     }
 

@@ -340,8 +340,7 @@ class MineField extends JLabel implements MouseListener {
 
         for( i = 0; i < fieldLength; i++ )
             for( j = 0; j < fieldLength; j++, $detected = 0 ) {
-                // co-ordinates of the 3x3 (or smaller if near an edge) grid
-                // containing all the adjacent Squares
+                // co-ordinates of the 3x3 (or smaller if near an edge) grid containing all the adjacent Squares
                 int left = (i == 0 ? 0 : i - 1);
                 int right = (i == fieldLength - 1 ? i : i + 1);
                 int top = (j == 0 ? 0 : j - 1);
@@ -356,7 +355,7 @@ class MineField extends JLabel implements MouseListener {
     }
 
     /**
-     * Find and reveal all adjacent blank space and bordering numbered <code>Squares</code><br>
+     * RECURSIVELY find and reveal all adjacent blank and numbered <code>Squares</code><br>
      * - gets called <bold>recursively</bold> for blank <code>Squares</code> (i.e. those NOT adjacent to any mines)
      * @param u - horizontal co-ordinate
      * @param v - vertical co-ordinate
@@ -961,9 +960,6 @@ class MineField extends JLabel implements MouseListener {
 
         /** The total number of mines in all neighbouring <code>Squares</code> */
         private int mineCount;
-
-        /** CONSTRUCTOR */
-        public Square() {}
 
         /**
          * Set the minecount variable of an individual <code>Square</code>
