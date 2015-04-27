@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -138,9 +137,7 @@ public class MineSwinger extends JFrame {
      */
     private int fieldDim;
 
-    private String strBaseURL;
-    private boolean soundsLoaded = false, soundsActive = false;
-    private java.applet.AudioClip[] soundFX;
+    private boolean soundsActive = false;
 
     MineField mineField;
     MineSettings settingsFrame;
@@ -176,7 +173,6 @@ public class MineSwinger extends JFrame {
      */
     public static void main(final String[] args) {
         System.out.println( "PROGRAM STARTED ON " + Thread.currentThread() );
-
         SwingUtilities.invokeLater( new Runnable() {
             @Override
             public void run() {
@@ -196,7 +192,6 @@ public class MineSwinger extends JFrame {
         System.out.println( myname() + Msgs.str( "debug_level" ) + DEBUG_LEVEL );
 
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-
         setTitle( VERSION );
         getContentPane().setBackground( COLOR_GAME_BKGRND );
 
@@ -386,7 +381,6 @@ public class MineSwinger extends JFrame {
         adjustScore();
 
         settingsFrame = new MineSettings( this );
-
         setLocation( 630, 50 );// while in development
         setVisible( true );
     }
@@ -450,33 +444,7 @@ public class MineSwinger extends JFrame {
         fontLARGE = new Font( strDEFAULT_TYPEFACE, Font.BOLD, FONT_SIZE_LG );
     }
 
-    /**
-     * get URL's from {@link #SND_CLIPS} array and load into {@link #soundFX} array
-     * @see java.applet.AudioClip
-     */
-    void loadSounds() {
-        URL $clip;
-        strBaseURL = "file:" + System.getProperty( "user.dir" ) + System.getProperty( "file.separator" );
-
-        if( DEBUG_LEVEL > 0 ) System.out.println( myname() + Msgs.str( "Snd.load" ) + "Base URL = " + strBaseURL );
-
-        try {
-            soundFX = new java.applet.AudioClip[NUM_SND_CLIPS];
-
-            for( int i = 0; i < NUM_SND_CLIPS; i++ ) {
-                $clip = new URL( strBaseURL + SND_CLIPS[i] );
-                if( DEBUG_LEVEL > 0 ) System.out.println( "URL[" + i + "] = " + $clip.toString() );
-
-                soundFX[i] = java.applet.Applet.newAudioClip( $clip );
-            }
-            soundsLoaded = true;
-        } catch( Exception e ) {
-            soundsLoaded = false;
-            System.err.println( myname() + Msgs.str( "Snd.load" ) + e );
-        }
-    }
-
-    /** @param track - index into {@link #soundFX} array of sound to play */
+    /** @param track - index into {@link #SND_CLIPS} array of sound to play */
     void playSound(final int track) {
         if( !soundsActive ) return;
 
@@ -485,36 +453,26 @@ public class MineSwinger extends JFrame {
             return;
         }
 
-        if( soundFX[track] == null ) {
+        if( SND_CLIPS[track] == null ) {
             System.err.println( myname() + Msgs.str( "Snd.play" ) + SND_CLIPS[track] + "NOT Found!" );
             return;
         }
-/*
-        public class JavaAudioPlaySoundExample
-        {
-          public static void main(String[] args) 
-          throws Exception
-          {*/
-            // open the sound file as a Java input stream
-            String gongFile = SND_CLIPS[track];
-            InputStream in;
-            try {
-                in = new FileInputStream(System.getProperty( "user.dir" ) + System.getProperty( "file.separator" ) + gongFile);
 
-                // create an audiostream from the inputstream
-                AudioStream audioStream = new AudioStream(in);
-
-                // play the audio clip with the audioplayer class
-                AudioPlayer.player.start(audioStream);
-            } catch( FileNotFoundException e ) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch( IOException e ) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-         
-//        soundFX[track].play();
+        // TODO Separate thread?
+        // open the sound file as a Java input stream
+        InputStream in;
+        try {
+            in = new FileInputStream( System.getProperty( "user.dir" ) + System.getProperty( "file.separator" )
+                            + SND_CLIPS[track] );
+            // create an audiostream from the inputstream
+            AudioStream audioStream = new AudioStream( in );
+            // play the audio clip with the audioplayer class
+            AudioPlayer.player.start( audioStream );
+        } catch( FileNotFoundException fnfe ) {
+            System.err.println( myname() + Msgs.str( "Snd.play" ) + SND_CLIPS[track] + "NOT Found:" + fnfe );
+        } catch( IOException ioe ) {
+            System.err.println( myname() + Msgs.str( "Snd.play" ) + SND_CLIPS[track] + "IO Problem: " + ioe );
+        }
         if( DEBUG_LEVEL > 1 ) System.out.println( myname() + Msgs.str( "Snd.play" ) + "Playing '" + SND_CLIPS[track] + "'" );
     }
 
@@ -523,11 +481,11 @@ public class MineSwinger extends JFrame {
         // tell the mine field that Settings has changed the Square size
         mineField.setSquareLength( len );
 
-        if( len == SQUARE_SIZE_SM ) {
+        if( len == SQUARE_SIZE_SM )
             mineField.setFont( fontSMALL );
-        } else if( len == SQUARE_SIZE_LG ) {
+        else if( len == SQUARE_SIZE_LG )
             mineField.setFont( fontLARGE );
-        } else
+        else
             // default: should only ever be == SQUARE_SIZE_MD
             mineField.setFont( fontMEDIUM );
 
@@ -672,14 +630,11 @@ public class MineSwinger extends JFrame {
                         playSound( SLOW );
                         infoMesg.setText( (currentScore > 0) ? Msgs.str( "poor.info" ) : Msgs.str( "bad.info" ) );
                     }
-
-                }// d > 0.02
+                }// else d > 0.02
 
                 mineField.paintArea(); // so the last flag is painted
                 halt();
-
-            }// if done
-
+            }// if game over
         } else // decrease
         {
             currentScore -= scoreMultiplier;
@@ -703,9 +658,7 @@ public class MineSwinger extends JFrame {
     /** shut down <code>Minesweeper</code> & <code>MineSettings</code> (if open) */
     private void end() {
         isRunning = false;
-
         if( mineField.exploder.isRunning() ) mineField.exploder.stop();
-
         if( settingsOpen ) settingsFrame.dispose();
     }
 
@@ -725,7 +678,6 @@ public class MineSwinger extends JFrame {
     class MineListener implements ActionListener {
         /** identify the source of action events */
         Object source;
-
         /** @return simple name of my Class */
         String myname() {
             return this.getClass().getSimpleName();
@@ -748,10 +700,6 @@ public class MineSwinger extends JFrame {
                 }
                 // SOUND
                 else if( source == soundBtn ) {
-                    if( !soundsLoaded ) {
-                        loadSounds();
-                    }
-
                     if( soundsActive ) {
                         soundsActive = false;
                         soundBtn.setText( Msgs.str( "Snd.go" ) );
