@@ -650,8 +650,8 @@ public class MineSwinger extends JFrame {
 
     /** @param msg - info to display */
     protected void setInfoMesg(final String msg) {
-        if( msg.isEmpty() ) return;
-
+        if( msg.isEmpty() ) //
+            return;
         infoMesg.setText( msg );
     }
 
@@ -678,6 +678,7 @@ public class MineSwinger extends JFrame {
     class MineListener implements ActionListener {
         /** identify the source of action events */
         Object source;
+
         /** @return simple name of my Class */
         String myname() {
             return this.getClass().getSimpleName();

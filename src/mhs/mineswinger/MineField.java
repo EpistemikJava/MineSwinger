@@ -123,7 +123,6 @@ class MineField extends JLabel implements MouseListener {
         if( DEBUG_LEVEL > 0 ) System.out.println( myname() + Msgs.str( "debug_level" ) + DEBUG_LEVEL );
 
         gameview = game;
-
         squareLength = MineSwinger.FIELD_SIZE_MD;
         reset( MineSwinger.FIELD_SIZE_MD );
 
@@ -146,9 +145,7 @@ class MineField extends JLabel implements MouseListener {
     void newGame() {
         firstPress = true;
         gameview.validate();
-
         if( exploder.isRunning() ) exploder.stop();
-
         reset( fieldLength );
     }
 
@@ -173,7 +170,6 @@ class MineField extends JLabel implements MouseListener {
         System.out.println( "density = " + density );
 
         layMines();
-
         cleared = badClear = destroyed = false;
         count();
 
@@ -181,75 +177,66 @@ class MineField extends JLabel implements MouseListener {
         addMouseListener( this );
     }
 
+    //@formatter:off
     /**
      * have <code>MineSwinger</code> play a sound
      * @param snd - index in soundClip array of sound to play
      * @see MineSwinger#playSound(int)
      */
-    void playSound(final int snd) {
-        gameview.playSound( snd );
-    }
+    void playSound(final int snd) { gameview.playSound( snd );}
 
     /**
      * have <code>MineSwinger</code> adjust the score
      * @param plus - increase or decrease the score
      * @see MineSwinger#setScore(boolean)
      */
-    void setScore(final boolean plus) {
-        gameview.setScore( plus );
-    }
+    void setScore(final boolean plus) { gameview.setScore( plus );}
 
     /**
      * have <code>MineSwinger</code> display a message
      * @param info to display
      */
-    void setGameText(final String info) {
-        gameview.setInfoMesg( info );
-    }
+    void setGameText(final String info) { gameview.setInfoMesg( info );}
 
     /**
      * update the display of the number of mines remaining
      * @param num - number of mines remaining
      */
-    void setMinesText(final int num) {
-        gameview.setMinesMesg( num );
-    }
+    void setMinesText(final int num) { gameview.setMinesMesg( num );}
 
     /** @return remaining number of hidden mines in the current game */
-    int getNumHiddenMines() {
-        return hiddenMines;
-    }
+    int getNumHiddenMines() { return hiddenMines;}
 
     /** @return total number of mines, hidden or flagged, in the current game */
-    int getNumTotalMines() {
-        return totalMines;
-    }
+    int getNumTotalMines() { return totalMines;}
 
     /** @return {@link #shaded} */
-    boolean isShaded() {
-        return shaded;
-    }
+    boolean isShaded() { return shaded;}
 
     /** @param state - new value for {@link #shaded} */
-    void setShaded(final boolean state) {
-        shaded = state;
-    }
+    void setShaded(final boolean state) { shaded = state;}
 
     /** @return {@link #firstPress} */
-    boolean isFirstPress() {
-        return firstPress;
-    }
+    boolean isFirstPress() { return firstPress;}
 
     /** @param state - new value for {@link #firstPress} */
-    void setFirstPress(final boolean state) {
-        firstPress = state;
-    }
+    void setFirstPress(final boolean state) { firstPress = state;}
+
+    /** @return density */
+    double getDensity() { return density;}
+
+    /**
+     * change current mine density
+     * @param dens - to set
+     */
+    void setDensity(final double dens) { density = dens;}
 
     /** @return {@link #fieldLength} */
-    int getFieldLength() {
-        return fieldLength;
-    }
+    int getFieldLength() { return fieldLength;}
 
+    /** @return {@link #squareLength} */
+    int getSquareLength() { return squareLength;}
+    //@formatter:on
     /**
      * change array length (number of <code>Squares</code> per side) and adjust overall array size
      * @param len - new field length
@@ -262,11 +249,6 @@ class MineField extends JLabel implements MouseListener {
         return $oldlen;
     }
 
-    /** @return {@link #squareLength} */
-    int getSquareLength() {
-        return squareLength;
-    }
-
     /**
      * change length (pixels) of each individual <code>Square</code> and adjust overall array size
      * @param side - square length
@@ -274,19 +256,6 @@ class MineField extends JLabel implements MouseListener {
     void setSquareLength(final int side) {
         squareLength = side;
         setSize( squareLength * fieldLength, squareLength * fieldLength );
-    }
-
-    /** @return density */
-    double getDensity() {
-        return density;
-    }
-
-    /**
-     * change current mine density
-     * @param dens - to set
-     */
-    void setDensity(final double dens) {
-        density = dens;
     }
 
     /** Clear any active question marks if user has de-activated them */
@@ -413,11 +382,9 @@ class MineField extends JLabel implements MouseListener {
 
         int x = evt.getX() / squareLength;
         int y = evt.getY() / squareLength;
-
         if( DEBUG_LEVEL > 2 ) System.out.println( myname() + Msgs.str( "mouse.press" ) + "Square[" + x + "][" + y + "] " );
 
         Square activeSqr = mine2dArray[x][y];
-
         if( firstPress ) gameview.startClock();
 
         // TODO: need this?
@@ -425,7 +392,6 @@ class MineField extends JLabel implements MouseListener {
 
         // Need at least Java version 1.4 to use getModifiersEx()
         int pressed = evt.getModifiersEx();
-
         if( DEBUG_LEVEL > 1 )
             System.out.println( myname() + Msgs.str( "mouse.press" ) + InputEvent.getModifiersExText( pressed ) );
 
@@ -579,7 +545,6 @@ class MineField extends JLabel implements MouseListener {
     @Override
     public void mouseReleased(final MouseEvent evt) {
         cleared = lightup = shaded = false;
-
         if( DEBUG_LEVEL > 1 )
             System.out.println( myname() + Msgs.str( "mouse.release" ) + InputEvent.getModifiersExText( evt.getModifiersEx() ) );
 
@@ -588,7 +553,6 @@ class MineField extends JLabel implements MouseListener {
         if( destroyed || badClear ) {
             destx = paintLeft;
             desty = paintTop;
-
             if( DEBUG_LEVEL > 2 )
                 System.out.println( myname() + Msgs.str( "mouse.release" ) + "destx = " + destx + " ; " + "desty = " + desty );
 
@@ -602,7 +566,6 @@ class MineField extends JLabel implements MouseListener {
 
             paintAll = true;
             repaint();
-
             gameview.halt();
         } else
             paintArea();
@@ -961,70 +924,49 @@ class MineField extends JLabel implements MouseListener {
         /** The total number of mines in all neighbouring <code>Squares</code> */
         private int mineCount;
 
+        //@formatter:off
         /**
          * Set the minecount variable of an individual <code>Square</code>
          * @param count int
          */
-        void setMinecount(final int count) {
-            mineCount = count;
-        }
+        void setMinecount(final int count) { mineCount = count;}
 
         /** @return The total number of mines in all neighbouring <code>Squares</code> */
-        int getMinecount() {
-            return mineCount;
-        }
+        int getMinecount() { return mineCount;}
 
         /** @return true if NO adjacent mines, otherwise false */
-        boolean isBlank() {
-            return mineCount == 0;
-        }
+        boolean isBlank() { return mineCount == 0;}
 
         /** @return true if this <code>Square</code> has a mine, otherwise false */
-        boolean hasMine() {
-            return hasMine;
-        }
+        boolean hasMine() { return hasMine;}
 
         /** Plants a mine in this <code>Square</code> */
-        void arm() {
-            hasMine = true;
-        }
+        void arm() { hasMine = true;}
 
         /** @return whether a <code>Square</code> has been revealed or not */
-        boolean isRevealed() {
-            return isRevealed;
-        }
+        boolean isRevealed() { return isRevealed;}
 
         /** Set value of <var>isRevealed</var> to TRUE */
-        void setRevealed() {
-            isRevealed = true;
-        }
+        void setRevealed() { isRevealed = true;}
 
         /** @return whether a <code>Square</code> has a flag placed (indicating a mine underneath) */
-        boolean hasFlag() {
-            return hasFlag;
-        }
+        boolean hasFlag() { return hasFlag;}
 
         /**
          * Set value of <var>hasFlag</var> to parameter value
          * @param flag - boolean
          */
-        void setFlag(final boolean flag) {
-            hasFlag = flag;
-        }
+        void setFlag(final boolean flag) { hasFlag = flag;}
 
         /** @return whether a <code>Square</code> has a question mark (indicating doubt about a mine placement) */
-        boolean hasQmark() {
-            return hasQmark;
-        }
+        boolean hasQmark() { return hasQmark;}
 
         /**
          * Set value of hasQmark to parameter value
          * @param qmark boolean
          */
-        void setQmark(final boolean qmark) {
-            hasQmark = qmark;
-        }
-
+        void setQmark(final boolean qmark) { hasQmark = qmark;}
+        //@formatter:on
     }/* inner class Square */
 
     /**
@@ -1048,7 +990,6 @@ class MineField extends JLabel implements MouseListener {
         public void actionPerformed(final ActionEvent ae) {
             if( ae.getSource() == exploder ) {
                 setMinesText( ++index );
-
                 if( DEBUG_LEVEL > 0 ) System.out.println( myname() + ": Event index = " + index );
 
                 repaint();
