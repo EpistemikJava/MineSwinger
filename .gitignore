@@ -2,5 +2,8 @@
 /sounds
 .*
 !.gitignore
-
-/bak/
+/ark
+/bak
+/logs
+*.zip
+*.bak
